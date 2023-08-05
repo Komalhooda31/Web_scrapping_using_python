@@ -6,17 +6,13 @@ import html5lib
 import re
 import hashlib
 
-
+# reading excel file and selecting column for urls
 files = pd.read_excel("Input.xlsx")
 URLS = files['urls']
 
-
-URL = 'https://insights.blackcoffer.com/ai-in-healthcare-to-improve-patient-outcomes/'
-request = requests.get(URL)
-
-
+# using request and beautifulsoup to extract and save headers and paragraphs
 def extract_save_content(URL):
-
+    request = requests.get(URL)
     soup = BeautifulSoup(request.content, 'html5lib')
     paragraphs = soup.find_all('p',)
     headings = soup.find_all('h1')
@@ -36,21 +32,16 @@ def extract_save_content(URL):
             file.write(paragraph.get_text()+ '\n')
     print(f'content from {URL}saved')
 
-
+# saving text file with their respective url name
 def create_from_url(URL):
-    Output_file = URL.split('/')[-1]
-
     
+    Output_file = URL.split('/')[-1]
     Output_file = re.sub(r'\W+', '', Output_file)
 
-   
     if not Output_file:
         Output_file = f'article_{hashlib.md5(URL.encode()).hexdigest()}'
     
-    return f'{Output_file}.txt'
-
-url = URL.strip()  
-
+    return f'{Output_file}.txt' 
 
 # loop for all urls in the csv file.
 for URL in URLS:
